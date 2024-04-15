@@ -1,0 +1,79 @@
+show databases;
+show tables from sakila;
+
+select * 
+from payment;
+
+#Q1 Write a SQL query that will display the first name, last name and total money spent by a customer in the range of $50 to $60 during the month of august 2005 in descending order of total money spent.
+
+select first_name, last_name, sum(payment.amount) as total_money_spent
+from customer
+join payment using (customer_id)
+where year(payment.payment_date) = 2005
+and month(payment.payment_date) = 8
+GROUP BY first_name, last_name
+having total_money_spent between 50 and 60
+order by total_money_spent desc;
+
+select *
+from rental;
+
+select * 
+from inventory;
+
+select * 
+from film;
+
+
+#Q2 Write a SQL query that display the title & count of top 5 movies rented most often.
+
+
+select title, count(rental.rental_id) as total_rentals
+from film 
+join inventory using (film_id)
+join rental using (inventory_id)
+group by film.title
+order by total_rentals desc
+limit 5;
+
+
+#Q3 Write a SQL query that will display the actor id, first name and last name of the actor with highest number of movies.
+select *
+from actor;
+
+select *
+from film_actor;
+
+select actor_id, first_name, last_name,  count(film_actor.film_id) as total_movies
+from actor
+join film_actor using (actor_id)
+group by actor_id, first_name, last_name
+order by total_movies desc
+limit 1;
+
+#Q4 Write an SQL query that will display the film category name, language and count of films for each category and language in descending order.
+select *
+from category;
+
+select *
+from film_category;
+
+select *
+from film;
+
+select *  
+from language;
+
+select category.name as category_name, language.name as language_name, count(film.film_id) as number_of_movies
+from film
+join film_category using (film_id)
+join language on film.language_id = language.language_id
+join category on film_category.category_id = category.category_id
+group by category_name, language_name
+order by number_of_movies desc;
+
+
+
+#show tables from world;
+#show columns from world. country;
+#select constraint_name, table_name, column_name, referenced_table_name, referenced_column_name from information_schema.key_column_usage where constraint_schema = 'world' and referenced_column_name is not null;
